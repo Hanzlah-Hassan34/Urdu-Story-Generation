@@ -24,7 +24,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0egenerate.proto\x12\nurdu_story\"5\n\x0fGenerateRequest\x12\x0e\n\x06prefix\x18\x01 \x01(\t\x12\x12\n\nmax_length\x18\x02 \x01(\x05\"h\n\x10GenerateResponse\x12\r\n\x05story\x18\x01 \x01(\t\x12\x12\n\nnum_tokens\x18\x02 \x01(\x05\x12\x0f\n\x07lambda3\x18\x03 \x01(\x02\x12\x0f\n\x07lambda2\x18\x04 \x01(\x02\x12\x0f\n\x07lambda1\x18\x05 \x01(\x02\"\x07\n\x05\x45mpty\"i\n\tModelInfo\x12\x12\n\nvocab_size\x18\x01 \x01(\x05\x12\x0f\n\x07lambda3\x18\x02 \x01(\x02\x12\x0f\n\x07lambda2\x18\x03 \x01(\x02\x12\x0f\n\x07lambda1\x18\x04 \x01(\x02\x12\x15\n\rmodel_version\x18\x05 \x01(\t2\x95\x01\n\x0eStoryGenerator\x12G\n\x08Generate\x12\x1b.urdu_story.GenerateRequest\x1a\x1c.urdu_story.GenerateResponse\"\x00\x12:\n\x0cGetModelInfo\x12\x11.urdu_story.Empty\x1a\x15.urdu_story.ModelInfo\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x0egenerate.proto\x12\nurdu_story\"5\n\x0fGenerateRequest\x12\x0e\n\x06prefix\x18\x01 \x01(\t\x12\x12\n\nmax_length\x18\x02 \x01(\x05\"z\n\x10GenerateResponse\x12\r\n\x05\x63hunk\x18\x01 \x01(\t\x12\x10\n\x08is_final\x18\x02 \x01(\x08\x12\x12\n\nnum_tokens\x18\x03 \x01(\x05\x12\x0f\n\x07lambda3\x18\x04 \x01(\x02\x12\x0f\n\x07lambda2\x18\x05 \x01(\x02\x12\x0f\n\x07lambda1\x18\x06 \x01(\x02\"\x07\n\x05\x45mpty\"i\n\tModelInfo\x12\x12\n\nvocab_size\x18\x01 \x01(\x05\x12\x0f\n\x07lambda3\x18\x02 \x01(\x02\x12\x0f\n\x07lambda2\x18\x03 \x01(\x02\x12\x0f\n\x07lambda1\x18\x04 \x01(\x02\x12\x15\n\rmodel_version\x18\x05 \x01(\t2\x97\x01\n\x0eStoryGenerator\x12I\n\x08Generate\x12\x1b.urdu_story.GenerateRequest\x1a\x1c.urdu_story.GenerateResponse\"\x00\x30\x01\x12:\n\x0cGetModelInfo\x12\x11.urdu_story.Empty\x1a\x15.urdu_story.ModelInfo\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -34,11 +34,11 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GENERATEREQUEST']._serialized_start=30
   _globals['_GENERATEREQUEST']._serialized_end=83
   _globals['_GENERATERESPONSE']._serialized_start=85
-  _globals['_GENERATERESPONSE']._serialized_end=189
-  _globals['_EMPTY']._serialized_start=191
-  _globals['_EMPTY']._serialized_end=198
-  _globals['_MODELINFO']._serialized_start=200
-  _globals['_MODELINFO']._serialized_end=305
-  _globals['_STORYGENERATOR']._serialized_start=308
-  _globals['_STORYGENERATOR']._serialized_end=457
+  _globals['_GENERATERESPONSE']._serialized_end=207
+  _globals['_EMPTY']._serialized_start=209
+  _globals['_EMPTY']._serialized_end=216
+  _globals['_MODELINFO']._serialized_start=218
+  _globals['_MODELINFO']._serialized_end=323
+  _globals['_STORYGENERATOR']._serialized_start=326
+  _globals['_STORYGENERATOR']._serialized_end=477
 # @@protoc_insertion_point(module_scope)

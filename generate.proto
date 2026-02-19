@@ -8,18 +8,19 @@ message GenerateRequest {
   int32 max_length = 2;      // Maximum tokens to generate
 }
 
-// Response message with generated story
+// Response message with generated story chunk
 message GenerateResponse {
-  string story = 1;          // Generated story
-  int32 num_tokens = 2;      // Number of tokens generated
-  float lambda3 = 3;         // Trigram weight
-  float lambda2 = 4;         // Bigram weight
-  float lambda1 = 5;         // Unigram weight
+  string chunk = 1;          // Story chunk (for streaming)
+  bool is_final = 2;         // Whether this is the final chunk
+  int32 num_tokens = 3;      // Number of tokens generated so far
+  float lambda3 = 4;         // Trigram weight
+  float lambda2 = 5;         // Bigram weight
+  float lambda1 = 6;         // Unigram weight
 }
 
 // gRPC service definition
 service StoryGenerator {
-  rpc Generate (GenerateRequest) returns (GenerateResponse) {}
+  rpc Generate (GenerateRequest) returns (stream GenerateResponse) {}
   rpc GetModelInfo (Empty) returns (ModelInfo) {}
 }
 

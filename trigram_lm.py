@@ -111,7 +111,7 @@ print(f"    Unigram wins: {uni_wins}, Lambda_1: {lambda1:.4f}")
 # 5. STORY GENERATION WITH INTERPOLATION
 # ============================================================================
 
-def generate_story(prefix="", max_length=500):
+def generate_story(prefix="", max_length=1000):
     """
     Generate a story using interpolated trigram model.
     

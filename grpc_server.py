@@ -51,14 +51,14 @@ def initialize_model():
 
 def generate_story(prefix="", max_length=500):
     """
-    Generate story using loaded model
+    Generate story using loaded model, yielding chunks
     
     Args:
         prefix: Starting phrase (space-separated tokens)
         max_length: Maximum tokens to generate
     
-    Returns:
-        Generated story as string
+    Yields:
+        Partial story chunks
     """
     uni_count = MODEL_STATE['uni_count']
     bi_count = MODEL_STATE['bi_count']
@@ -81,6 +81,7 @@ def generate_story(prefix="", max_length=500):
             weights=[uni_count[t] for t in uni_count.keys()]
         )[0]
         tokens.append(first_tok)
+        yield " ".join(tokens)  # Yield first token
     
     # Generate until <EOT> or max_length
     for _ in range(max_length):
@@ -125,12 +126,11 @@ def generate_story(prefix="", max_length=500):
                 )[0]
         
         tokens.append(next_tok)
+        yield " ".join(tokens)  # Yield updated story
         
         # Stop if we reach EOT
         if next_tok == "<EOT>":
             break
-    
-    return " ".join(tokens)
 
 
 class StoryGeneratorServicer(generate_pb2_grpc.StoryGeneratorServicer):
@@ -138,42 +138,49 @@ class StoryGeneratorServicer(generate_pb2_grpc.StoryGeneratorServicer):
     
     def Generate(self, request, context):
         """
-        Generate a story based on prefix and max_length
+        Generate a story based on prefix and max_length, streaming chunks
         
         Args:
             request: GenerateRequest with prefix and max_length
             context: gRPC context
         
-        Returns:
-            GenerateResponse with story and metadata
+        Yields:
+            GenerateResponse with story chunks
         """
         try:
             print(f"[*] Generating story with prefix: '{request.prefix}', max_length: {request.max_length}")
             
-            story = generate_story(
+            lambdas = MODEL_STATE['lambdas']
+            num_tokens = 0
+            
+            for chunk in generate_story(
                 prefix=request.prefix,
                 max_length=request.max_length
-            )
+            ):
+                num_tokens = len(chunk.split())
+                is_final = chunk.endswith("<EOT>") or num_tokens >= request.max_length
+                
+                response = generate_pb2.GenerateResponse(
+                    chunk=chunk,
+                    is_final=is_final,
+                    num_tokens=num_tokens,
+                    lambda3=lambdas['lambda3'],
+                    lambda2=lambdas['lambda2'],
+                    lambda1=lambdas['lambda1']
+                )
+                
+                yield response
+                
+                if is_final:
+                    break
             
-            num_tokens = len(story.split())
-            lambdas = MODEL_STATE['lambdas']
-            
-            response = generate_pb2.GenerateResponse(
-                story=story,
-                num_tokens=num_tokens,
-                lambda3=lambdas['lambda3'],
-                lambda2=lambdas['lambda2'],
-                lambda1=lambdas['lambda1']
-            )
-            
-            print(f"[✓] Story generated: {num_tokens} tokens")
-            return response
+            print(f"[✓] Story generation completed: {num_tokens} tokens")
         
         except Exception as e:
             print(f"[✗] Error in Generate: {e}")
             context.set_details(f"Error: {str(e)}")
             context.set_code(grpc.StatusCode.INTERNAL)
-            return generate_pb2.GenerateResponse()
+            yield generate_pb2.GenerateResponse()
     
     def GetModelInfo(self, request, context):
         """

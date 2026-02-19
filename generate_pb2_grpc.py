@@ -35,7 +35,7 @@ class StoryGeneratorStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.Generate = channel.unary_unary(
+        self.Generate = channel.unary_stream(
                 '/urdu_story.StoryGenerator/Generate',
                 request_serializer=generate__pb2.GenerateRequest.SerializeToString,
                 response_deserializer=generate__pb2.GenerateResponse.FromString,
@@ -66,7 +66,7 @@ class StoryGeneratorServicer(object):
 
 def add_StoryGeneratorServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'Generate': grpc.unary_unary_rpc_method_handler(
+            'Generate': grpc.unary_stream_rpc_method_handler(
                     servicer.Generate,
                     request_deserializer=generate__pb2.GenerateRequest.FromString,
                     response_serializer=generate__pb2.GenerateResponse.SerializeToString,
@@ -99,7 +99,7 @@ class StoryGenerator(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(
+        return grpc.experimental.unary_stream(
             request,
             target,
             '/urdu_story.StoryGenerator/Generate',
