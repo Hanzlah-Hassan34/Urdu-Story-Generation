@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package urdu_story;
+
+// Request message for story generation
+message GenerateRequest {
+  string prefix = 1;         // Starting phrase in Urdu
+  int32 max_length = 2;      // Maximum tokens to generate
+}
+
+// Response message with generated story
+message GenerateResponse {
+  string story = 1;          // Generated story
+  int32 num_tokens = 2;      // Number of tokens generated
+  float lambda3 = 3;         // Trigram weight
+  float lambda2 = 4;         // Bigram weight
+  float lambda1 = 5;         // Unigram weight
+}
+
+// gRPC service definition
+service StoryGenerator {
+  rpc Generate (GenerateRequest) returns (GenerateResponse) {}
+  rpc GetModelInfo (Empty) returns (ModelInfo) {}
+}
+
+// Empty message
+message Empty {}
+
+// Model information
+message ModelInfo {
+  int32 vocab_size = 1;
+  float lambda3 = 2;
+  float lambda2 = 3;
+  float lambda1 = 4;
+  string model_version = 5;
+}
