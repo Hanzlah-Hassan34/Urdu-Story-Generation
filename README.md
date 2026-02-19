@@ -1,43 +1,55 @@
-# Urdu-Story-Generation
+# Urdu Story Generator
 
-AI-powered Urdu children's story generation using BPE tokenization and trigram language modeling.
+AI-powered Urdu story generation using BPE tokenization and trigram language modeling.
 
-## Phases Completed
+## Setup
 
-### Phase I-IV: Backend & Microservice
-- BPE Tokenizer implementation
-- Trigram Language Model training
-- gRPC microservice with Docker support
-- GitHub Actions CI/CD pipeline
+### Prerequisites
+- Python 3.10+
+- Node.js 18+
+- pip/npm
 
-### Phase V: Reactive Frontend (Current)
-- Next.js web application
-- Real-time streaming story generation
-- Urdu text input/output with RTL support
-- Server-Sent Events for ChatGPT-like experience
+### Backend
 
-## Quick Start
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-1. **Start the gRPC server:**
-   ```bash
-   python grpc_server.py
-   ```
+# Preprocess corpus
+python preprocess.py
 
-2. **Start the frontend:**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
+# Tokenize with BPE
+python tokenizer.py
 
-3. Open http://localhost:3000 and start generating stories!
+# Train and save model
+python train_model.py
+
+# Start gRPC server
+python server.py
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Visit http://localhost:3000 to generate stories.
 
 ## Architecture
 
-- **Backend**: Python gRPC service with trigram model
-- **Frontend**: Next.js with TypeScript, streaming via SSE
-- **Communication**: gRPC between API routes and backend, SSE to browser
+- **Tokenizer**: BPE-based subword tokenization
+- **Model**: Interpolated trigram language model trained on Urdu stories
+- **Backend**: Python gRPC microservice
+- **Frontend**: Next.js with real-time streaming via SSE
 
-## Next Steps
+## Project Files
 
-- Phase VI: Full deployment on Vercel + cloud backend
+- `preprocess.py` - Clean and normalize Urdu text
+- `tokenizer.py` - BPE tokenization
+- `train_model.py` - Train trigram model
+- `model.py` - Save/load model weights
+- `server.py` - gRPC service
+- `client.py` - Test client
