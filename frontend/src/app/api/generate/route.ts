@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server';
 import * as grpc from '@grpc/grpc-js';
 import * as protoLoader from '@grpc/proto-loader';
 
-// Find proto file in project root, not frontend
-const PROTO_PATH = path.resolve(process.cwd(), '../generate.proto');
+// Proto: use local copy for Vercel, fallback to parent for local dev
+const PROTO_PATH = path.resolve(process.cwd(), 'generate.proto');
 
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
   keepCase: true,
@@ -17,16 +17,38 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as any;
 const storyGenerator = protoDescriptor.urdu_story.StoryGenerator;
 
-const client = new storyGenerator(
-  'localhost:50051',
-  grpc.credentials.createInsecure()
-);
+function getGrpcClient() {
+  const url = process.env.GRPC_BACKEND_URL || 'localhost:50051';
+  const isSecure = !url.includes('localhost') && !url.includes('127.0.0.1');
+  const creds = isSecure ? grpc.credentials.createSsl() : grpc.credentials.createInsecure();
+  const host = url.includes(':') ? url : `${url}:443`;
+  return new storyGenerator(host, creds);
+}
 
 export async function POST(request: NextRequest) {
   const { prefix, maxLength = 500 } = await request.json();
+  const client = getGrpcClient();
 
   const responseStream = new ReadableStream({
     start(controller) {
+      let closed = false;
+      const safeClose = () => {
+        if (!closed) {
+          closed = true;
+          try {
+            controller.close();
+          } catch (_) {}
+        }
+      };
+      const safeError = (err: unknown) => {
+        if (!closed) {
+          closed = true;
+          try {
+            controller.error(err);
+          } catch (_) {}
+        }
+      };
+
       const call = client.Generate({
         prefix: prefix || '',
         max_length: maxLength,
@@ -41,13 +63,10 @@ export async function POST(request: NextRequest) {
         controller.enqueue(new TextEncoder().encode(data));
       });
 
-      call.on('end', () => {
-        controller.close();
-      });
-
+      call.on('end', () => safeClose());
       call.on('error', (error: any) => {
         console.error('gRPC error:', error);
-        controller.error(error);
+        safeError(error);
       });
     },
   });

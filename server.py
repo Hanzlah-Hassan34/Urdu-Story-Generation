@@ -1,5 +1,6 @@
 """gRPC server for trigram story generation"""
 
+import os
 import sys
 import random
 from concurrent import futures
@@ -120,8 +121,8 @@ def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     generate_pb2_grpc.add_StoryGeneratorServicer_to_server(StoryGeneratorServicer(), server)
     
-    port = "50051"
-    server.add_insecure_port(f"[::]:{port}")
+    port = int(os.environ.get("PORT", "50051"))
+    server.add_insecure_port(f"0.0.0.0:{port}")
     
     print(f"\n{'='*50}")
     print("gRPC Story Server")
