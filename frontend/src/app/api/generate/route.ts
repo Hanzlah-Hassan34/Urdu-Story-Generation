@@ -18,7 +18,8 @@ const protoDescriptor = grpc.loadPackageDefinition(packageDefinition) as any;
 const storyGenerator = protoDescriptor.urdu_story.StoryGenerator;
 
 function getGrpcClient() {
-  const url = process.env.GRPC_BACKEND_URL || 'localhost:50051';
+  let url = process.env.GRPC_BACKEND_URL || 'localhost:50051';
+  url = url.replace(/^https?:\/\//, '').trim(); // strip https:// or http://
   const isSecure = !url.includes('localhost') && !url.includes('127.0.0.1');
   const creds = isSecure ? grpc.credentials.createSsl() : grpc.credentials.createInsecure();
   const host = url.includes(':') ? url : `${url}:443`;
