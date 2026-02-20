@@ -26,5 +26,5 @@ ENV PORT=50051
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD python -c "import grpc; grpc.aio.aio.insecure_channel('localhost:50051')" || exit 1
 
-# Run gRPC server
-CMD ["python", "server.py"]
+# Run HTTP API (Render-compatible)
+CMD ["python", "app.py"]

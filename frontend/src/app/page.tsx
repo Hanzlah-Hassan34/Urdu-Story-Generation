@@ -41,7 +41,10 @@ export default function Home() {
             if (line.startsWith('data: ')) {
               try {
                 const data = JSON.parse(line.slice(6));
-                story = data.chunk.replace(/<EOT>/g, '');
+                story = data.chunk
+                  .replace(/<EOS>/g, '۔')
+                  .replace(/<EOP>/g, '\n')
+                  .replace(/<EOT>/g, '۔');
                 setMessages((msgs) => {
                   const lastUserIdx = msgs.map(m => m.role).lastIndexOf('user');
                   const newMsgs = [...msgs];
